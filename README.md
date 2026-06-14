@@ -24,7 +24,7 @@
 ### Windows（PowerShell）
 
 ```powershell
-git clone https://github.com/<你的fork>/superpowers-for-zcode.git
+git clone https://github.com/HappinessTiger/superpowers-for-zcode.git
 cd superpowers-for-zcode
 .\install.ps1
 ```
@@ -32,7 +32,7 @@ cd superpowers-for-zcode
 ### macOS / Linux（Bash）
 
 ```bash
-git clone https://github.com/<你的fork>/superpowers-for-zcode.git
+git clone https://github.com/HappinessTiger/superpowers-for-zcode.git
 cd superpowers-for-zcode
 ./install.sh
 ```
