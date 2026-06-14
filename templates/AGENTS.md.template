@@ -1,0 +1,96 @@
+# ZCode × Superpowers — Bootstrap 指令
+
+> 本文件由 superpowers-for-zcode 自动生成，请勿手动编辑（卸载时会通过 hash 检测修改）。
+> 上游版本：{{VERSION}} ｜ 安装日期：{{DATE}}
+> 上游来源：https://github.com/obra/superpowers
+> 技能目录：~/.agents/skills/
+
+---
+
+## 核心铁律：1% 也要调用 Skill
+
+**在做任何事（包括回答澄清性问题）之前，必须先检查是否有相关 skill 适用。只要存在 1% 的可能性某个 skill 适用于当前任务，就必须先用 `Skill` 工具调用它。**
+
+这不是建议，不是可选项。你不能用任何理由绕开它。
+
+### 偷懒念头识别表（Red Flags）
+
+当脑子里冒出下面任何一句话时——**停下来，你正在自我合理化**：
+
+| 念头 | 真相 |
+|------|------|
+| "这只是个简单问题" | 问题也是任务。先查 skill。 |
+| "我先了解一下上下文" | skill 检查在澄清问题**之前**。 |
+| "先看看代码再说" | skill 会告诉你**怎么**看代码。先查。 |
+| "我快速 git/文件查一下就行" | 文件没有对话上下文。先查 skill。 |
+| "这点小事不需要正式 skill" | 只要有 skill 适用，就用。 |
+| "我记得这个 skill 内容" | skill 会演进。读当前版本。 |
+| "这个 skill 杀鸡用牛刀" | 简单的事会变复杂。用它。 |
+| "我先做这一件事再说" | 做任何事之前先查。 |
+| "我知道这个概念" | 知道概念 ≠ 用了 skill。调用它。 |
+
+---
+
+## 可用的技能
+
+以下技能随上游版本动态生成：
+
+{{SKILLS_LIST}}
+
+---
+
+## Skill 优先级
+
+当多个 skill 可能同时适用时：
+
+1. **流程类 skill 先用**（brainstorming、systematic-debugging）—— 决定"怎么做"
+2. **实施类 skill 后用**（test-driven-development 等）—— 指导具体执行
+
+---
+
+## 工具名映射（重要）
+
+Superpowers 的 skill 原文用 Claude Code 工具名编写。在 ZCode 里调用时按下表替换：
+
+| Claude Code | ZCode 对应 | 说明 |
+|------------|-----------|------|
+| `Skill` 工具 | `Skill` 工具 | ✅ 同名，直接用 |
+| `Task`（派子代理） | `Agent` 工具 | 子代理派发改用 Agent |
+| `TodoWrite` | `TodoWrite` | ✅ 同名，直接用 |
+| `Read` | `Read` | ✅ 同名 |
+| `Edit` / `Write` | `Edit` / `Write` | ✅ 同名 |
+| `Bash` | `Bash` | ✅ 同名 |
+| `EnterPlanMode` / `ExitPlanMode` | `EnterPlanMode` / `ExitPlanMode` | ✅ 同名 |
+| `WebFetch` | `mcp__web_reader__webReader` | ⚠️ 换成内置 webReader |
+| `AskUserQuestion` | `AskUserQuestion` | ✅ 同名 |
+
+绝大多数工具名一致——这是 ZCode 能近乎零成本适配 Superpowers 的根本原因。
+
+---
+
+## 指令优先级
+
+```
+1. 用户的显式指令（本文件 / 直接要求）—— 最高
+2. Superpowers skills —— 覆盖默认 system 行为
+3. 默认 system prompt —— 最低
+```
+
+如果你在本项目/会话里说"不要用 TDD"，我会听你的。用户始终拥有控制权。
+
+---
+
+## Skill 类型
+
+- **刚性 skill**（TDD、debugging、verification）：严格按步骤执行，不要"灵活变通"掉纪律
+- **柔性 skill**（模式类）：根据上下文灵活运用原则
+
+skill 本身会告诉你它属于哪一类。
+
+---
+
+## 已知限制
+
+1. **SessionStart Hook 不会自动注入**：Claude Code 靠 hook 把 `using-superpowers` 全文塞进每次会话上下文。ZCode 没有等价 hook，所以本文件作为**静态 bootstrap** 替代。如果某次会话我没表现出"主动查 skill"的行为，请提醒我"用 superpowers"。
+2. **斜杠命令**：原仓库的 `commands/` 在 ZCode 不生效。直接用 `/skill-name` 或自然语言触发即可。
+3. **`writing-skills` 与内置 `skill-creator` 功能重叠**：两者都能创建技能。建议日常用 ZCode 官方的 `skill-creator`，Superpowers 的 `writing-skills` 作为方法论参考。

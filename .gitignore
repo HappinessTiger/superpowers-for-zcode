@@ -1,0 +1,5 @@
+tests/.tmp/
+*.tmp
+
+# Local working notes (not distributed)
+doc_md/
