@@ -1,0 +1,2 @@
+# superpowersforzcode
+superpowers插件适配zcode
