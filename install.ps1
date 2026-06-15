@@ -130,15 +130,25 @@ Write-Info "目标版本：$versionTag"
 $cloneTarget = Join-Path $tempDir "superpowers"
 Write-Info "git clone --depth 1 --branch $versionTag $UPSTREAM_URL"
 
-try {
-    & git clone --depth 1 --branch $versionTag $UPSTREAM_URL $cloneTarget 2>&1 | Out-Null
-    if ($LASTEXITCODE -ne 0) {
-        Cleanup-Temp
-        Exit-WithCode 2 "git clone 失败。请检查网络/代理，或确认版本 tag '$versionTag' 是否存在。"
-    }
-} catch {
+# 注意：git 会把 "Cloning into '...'"（正常进度）写到 stderr，
+# 而本脚本顶部设置了 $ErrorActionPreference = "Stop"，PowerShell 会把
+# 任何 stderr 当成终止错误（误判为 clone 失败）。
+# -ErrorAction 是 PowerShell 通用参数，对 native command（git.exe）无效，
+# 反而会被当成参数传给 git 导致 "unknown switch" 错误。
+# 因此：临时切到 Continue，调完 git 立即恢复，并缓存 $LASTEXITCODE。
+$prevEAP = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
+$cloneLog = & git clone --depth 1 --branch $versionTag $UPSTREAM_URL $cloneTarget 2>&1
+$cloneExit = $LASTEXITCODE
+$ErrorActionPreference = $prevEAP
+if ($cloneExit -ne 0) {
     Cleanup-Temp
-    Exit-WithCode 2 "git clone 异常：$_"
+    $detail = ($cloneLog | Out-String).Trim()
+    if ($detail) {
+        Write-Err "git clone 详细输出："
+        Write-Host $detail -ForegroundColor DarkGray
+    }
+    Exit-WithCode 2 "git clone 失败（退出码 $cloneExit）。请检查网络/代理，或确认版本 tag '$versionTag' 是否存在。"
 }
 
 # 校验 skills 目录
